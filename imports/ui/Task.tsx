@@ -1,5 +1,9 @@
 import React from 'react';
+import type { TaskType} from './App';
 
-export const Task = ({task})=>{
+type Props = {
+    task: TaskType;
+};
+export const Task = ({task}:Props)=>{
     return <li>{task.text}</li>
 }
