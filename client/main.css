@@ -3,3 +3,6 @@ body {
   font-family: sans-serif;
   background-color: grey;
 }
+.task-form {
+  margin-top: 1rem;
+}
