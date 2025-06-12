@@ -1,8 +1,4 @@
 import { Mongo } from 'meteor/mongo';
+import {TaskType} from "/imports/ui/App";
 
-export type TasksCollectionType = {
-  _id: number;
-  text: string;
-}
-
-export const TaskCollection = new Mongo.Collection<TasksCollectionType>('tasks');
+export const TasksCollection = new Mongo.Collection<TaskType>('tasks');
