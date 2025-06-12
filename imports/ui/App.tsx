@@ -1,9 +1,7 @@
 import React from 'react';
-import { Hello } from './Hello';
-import { Info } from './Info';
-import { Task } from './Task';
+import {Task} from './Task';
 
- export type TaskType = {
+export type TaskType = {
     _id: number;
     text: string;
 };
@@ -17,12 +15,10 @@ const tasks: TaskType[] = [
 ];
 
 export const App = () => (
-  <div>
-    <h1>Welcome to Meteor!</h1>
-      <ul>
-          {tasks.map((task:TaskType) => <Task key={task._id} task={task}/>)}
-      </ul>
-    <Hello />
-    <Info />
-  </div>
+    <div>
+        <h1>Welcome to Meteor!</h1>
+        <ul>
+            {tasks.map((task: TaskType) => <Task key={task._id} task={task}/>)}
+        </ul>
+    </div>
 );
