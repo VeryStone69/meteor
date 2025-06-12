@@ -1,18 +1,19 @@
 import { Meteor } from 'meteor/meteor';
 import { TasksCollection } from '/imports/api/TasksCollection';
+import "../imports/api/TasksPublications";
 
+const insertTask = async (taskText: string) => {
+  await TasksCollection.insertAsync({ text: taskText });
+};
 
-const insertTask = (taskText:string) => TasksCollection.insert({ text: taskText });
-
-Meteor.startup(() => {
-  if (TasksCollection.find().count() === 0) {
+Meteor.startup(async () => {
+  if ((await TasksCollection.find().countAsync()) === 0) {
     [
       'Смайлик',
       'Цветок',
-      'Third Task',
       'Солнце',
       'Футбол',
       'Айтигеник',
-    ].forEach(insertTask)
+    ].forEach(insertTask);
   }
 });

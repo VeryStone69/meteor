@@ -1,24 +1,29 @@
 import React from 'react';
 import {Task} from './Task';
+import {TasksCollection} from "/imports/api/TasksCollection";
+import { useTracker, useSubscribe } from "meteor/react-meteor-data";
 
 export type TaskType = {
-    _id: number;
+    _id: string;
     text: string;
 };
 
-const tasks: TaskType[] = [
-    {_id: 1, text: 'Смайлик'},
-    {_id: 2, text: 'Цветок'},
-    {_id: 3, text: 'Солнце'},
-    {_id: 4, text: 'Футбол'},
-    {_id: 5, text: 'Айтигеник'},
-];
+export const App = () => {
+    const tasks:TaskType[] = useTracker(() => TasksCollection.find().fetch());
+    const isLoading = useSubscribe("tasks");
+    if (isLoading()) {
+        return <div>Loading...</div>;
+    }
 
-export const App = () => (
-    <div>
-        <h1>Welcome to Meteor!</h1>
-        <ul>
-            {tasks.map((task: TaskType) => <Task key={task._id} task={task}/>)}
-        </ul>
-    </div>
-);
+    return (
+        <div>
+            <h1>Welcome to Meteor!!!!!!!!!!!!!</h1>
+
+            <ul>
+                {tasks.map((task:TaskType) => (
+                    <Task key={task._id} task={task} />
+                ))}
+            </ul>
+        </div>
+    );
+};
