@@ -6,12 +6,6 @@ import {TaskForm} from "/imports/ui/TaskForm";
 import {Meteor} from "meteor/meteor";
 import type {TaskType, ToggleCheckedArgs} from "/imports/types/TaskType";
 
-// export type TaskType = {
-//     _id: string;
-//     text: string;
-//     isChecked: boolean
-// };
-
 export const App = () => {
     const isLoading = useSubscribe("tasks");
 
@@ -19,6 +13,9 @@ export const App = () => {
 
     const handleToggleChecked = async ({_id, isChecked}: ToggleCheckedArgs) =>
         await Meteor.callAsync("tasks.toggleChecked", {_id, isChecked});
+
+    const handleDelete = async ({_id}: { _id: string }) =>
+        await Meteor.callAsync("tasks.delete", {_id});
 
     if (isLoading()) {
         return <div>Loading...</div>;
@@ -30,7 +27,9 @@ export const App = () => {
 
             <ul>
                 {tasks.map((task: TaskType) => <Task key={task._id} task={task}
-                                                     onCheckboxClick={handleToggleChecked}/>)}
+                                                     onCheckboxClick={handleToggleChecked}
+                                                     onDeleteClick={handleDelete}
+                />)}
             </ul>
         </div>
     );
