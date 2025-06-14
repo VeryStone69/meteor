@@ -15,10 +15,10 @@ export const App = () => {
     if (isLoading()) {
         return <div>Loading...</div>;
     }
-<TaskForm/>
     return (
         <div>
             <h1>Welcome to Meteor!!!!!!!!!!!!!</h1>
+            <TaskForm/>
 
             <ul>
                 {tasks.map((task: TaskType) => (
