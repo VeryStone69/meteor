@@ -1,10 +1,6 @@
 import React, {FormEvent, useState} from "react";
 import {Meteor} from 'meteor/meteor';
-
-type InsertTaskArgsType = {
-    text: string;
-    createdAt: Date;
-};
+import {TaskInsertInput} from "/imports/types/TaskType";
 
 export const TaskForm = () => {
     const [text, setText] = useState<string>("");
@@ -14,11 +10,13 @@ export const TaskForm = () => {
 
         if (!text) return;
 
-        await Meteor.callAsync("tasks.insert", {
+        const doc: TaskInsertInput = {
             text: text.trim(),
+            isChecked: false,
             createdAt: new Date(),
-        } as InsertTaskArgsType);
+        };
 
+        await Meteor.callAsync("tasks.insert", doc);
         setText("");
     };
 

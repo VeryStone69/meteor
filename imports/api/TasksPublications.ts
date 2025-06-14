@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { TasksCollection } from "./TasksCollection";
 import {Mongo} from "/.meteor/local/build/programs/server/assets/packages/mongo/mongo";
-import {TaskType} from "/imports/ui/App";
+import {TaskType} from "/imports/types/TaskType";
 
 
 Meteor.publish("tasks", ():Mongo.Cursor<TaskType> => {
