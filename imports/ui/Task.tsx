@@ -1,5 +1,5 @@
 import React from 'react';
-import type {TaskType} from './App';
+import {TaskType} from "/imports/types/TaskType";
 
 type Props = {
     task: TaskType;
