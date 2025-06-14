@@ -2,9 +2,17 @@ import { Meteor } from 'meteor/meteor';
 import { TasksCollection } from '/imports/api/TasksCollection';
 import "../imports/api/TasksPublications";
 import "../imports/api/TasksMethods";
+import {TaskType} from "/imports/types/TaskType";
 
-const insertTask = async (taskText: string) => {
-  await TasksCollection.insertAsync({ text: taskText });
+type NewTask = Omit<TaskType, '_id'>;
+
+const insertTask = async (taskText: string):Promise<void> => {
+  const task: NewTask = {
+    text: taskText,
+    isChecked: false,
+    createdAt: new Date(),
+  };
+  await TasksCollection.insertAsync(task);
 };
 
 Meteor.startup(async () => {
