@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { TasksCollection } from "./TasksCollection";
-import {Mongo} from "/.meteor/local/build/programs/server/assets/packages/mongo/mongo";
+import { Mongo } from 'meteor/mongo';
 import {TaskType} from "/imports/types/TaskType";
 
 

@@ -2,13 +2,20 @@
 export type TaskType = {
     _id: string;
     text: string;
-    isChecked: boolean;
     createdAt: Date;
+    grid?: number[][]; // поле для хранения состояния сетки
 };
 
 export type TaskInsertInput = Omit<TaskType, "_id">;
 
 export type ToggleCheckedArgs = {
     _id: string;
-    isChecked: boolean;
+    isActive: boolean;
 };
+
+export interface RoomType {
+    _id?: string;
+    title: string;
+    grid: number[][];
+}
+

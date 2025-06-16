@@ -9,7 +9,7 @@ type NewTask = Omit<TaskType, '_id'>;
 const insertTask = async (taskText: string):Promise<void> => {
   const task: NewTask = {
     text: taskText,
-    isChecked: false,
+    // isChecked: false,
     createdAt: new Date(),
   };
   await TasksCollection.insertAsync(task);
@@ -26,3 +26,10 @@ Meteor.startup(async () => {
     ].forEach(insertTask);
   }
 });
+// import { Meteor } from 'meteor/meteor';
+// import '../imports/api/roomsMethods'; // <-- подключаем методы!
+// import '../imports/api/roomsPublications'; // <-- и публикации!
+//
+// Meteor.startup(() => {
+//     console.log('🚀 Сервер запущен');
+// });
