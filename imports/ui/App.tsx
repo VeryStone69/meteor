@@ -5,6 +5,7 @@ import {useTracker, useSubscribe} from "meteor/react-meteor-data";
 import {TaskForm} from "/imports/ui/TaskForm";
 import {Meteor} from "meteor/meteor";
 import type {TaskType, ToggleCheckedArgs} from "/imports/types/TaskType";
+import {Grid} from "/imports/ui/Grid";
 
 export const App = () => {
     const isLoading = useSubscribe("tasks");
@@ -39,6 +40,7 @@ export const App = () => {
                     />)}
                 </ul>
             </div>
+            <Grid/>
         </div>
     );
 };
