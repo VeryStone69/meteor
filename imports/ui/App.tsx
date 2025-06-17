@@ -10,17 +10,57 @@ import {Grid} from "/imports/ui/Grid";
 export const App = () => {
     const isLoading = useSubscribe("tasks");
 
-    const tasks: TaskType[] = useTracker(() => TasksCollection.find({}, {sort: {createdAt: -1}}).fetch());
+    // id активной задачи
+    const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
-    const handleToggleChecked = async ({_id, isChecked}: ToggleCheckedArgs) =>
-        await Meteor.callAsync("tasks.toggleChecked", {_id, isChecked});
+    //  состояние сетки для текущей активной задачи
+    const [activeGrid, setActiveGrid] = useState<number[][] | null>(null);
 
-    const handleDelete = async ({_id}: { _id: string }) =>
+    const tasks: RoomType[] = useTracker(() => TasksCollection.find({}, {sort: {createdAt: -1}}).fetch());
+    //  когда изменяется список задач — выбирается первая задача (по умолчанию)
+    useEffect(() => {
+        if (tasks.length === 0) {
+            setActiveTaskId(null);
+            setActiveGrid(null);
+        } else if (!activeTaskId || !tasks.find(t => t._id === activeTaskId)) {
+            const first = tasks[0];
+            setActiveTaskId(first._id);
+            setActiveGrid(first.grid ?? Array.from({length: 10}, () => Array(10).fill(0)));
+        }
+    }, [tasks]);
+
+    // поиск текущую активную задачу
+    const activeTask = tasks.find((task) => task._id === activeTaskId);
+
+    // при переключении задачи — сохраняется предыдущая сетка
+    const handleTaskClick = async (task: RoomType) => {
+        if (activeTask && activeGrid) {
+            await Meteor.callAsync("tasks.updateGrid", {
+                _id: activeTask._id,
+                grid: activeGrid,
+            });
+        }
+
+        // загрузить сетку новой задачи
+        setActiveTaskId(task._id);
+        setActiveGrid(task.grid ?? Array.from({length: 10}, () => Array(10).fill(0)));
+    };
+
+    const handleDelete = async ({_id}: { _id: string }) => {
         await Meteor.callAsync("tasks.delete", {_id});
+        // если удалили активную задачу — сбросить
+        if (_id === activeTaskId) {
+            setActiveTaskId(null);
+            setActiveGrid(null);
+        }
+    }
+    const emptyGrid = Array.from({length: 10}, () => Array(10).fill(0));
 
     if (isLoading()) {
         return <div>Loading...</div>;
     }
+
+
     return (
         <div className="app">
             <header>
@@ -34,13 +74,19 @@ export const App = () => {
                 <TaskForm/>
 
                 <ul className="tasks">
-                    {tasks.map((task: TaskType) => <Task key={task._id} task={task}
-                                                         onCheckboxClick={handleToggleChecked}
-                                                         onDeleteClick={handleDelete}
+                    {tasks.map((task: RoomType) => <Task
+                        key={task._id}
+                        task={task}
+                        isActive={task._id === activeTaskId}
+                        onClick={() => handleTaskClick(task)}
+                        onDeleteClick={handleDelete}
                     />)}
                 </ul>
             </div>
-            <Grid/>
+            <Grid
+                grid={activeGrid || emptyGrid}
+                setGrid={setActiveGrid}
+            />
         </div>
     );
 };

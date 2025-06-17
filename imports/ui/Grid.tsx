@@ -1,18 +1,15 @@
-import React, {useState} from 'react';
+import React from 'react';
 
-//  Утилита: создаёт пустую сетку 10×10, заполненную нулями (0 означает белую ячейку)
-const generateEmptyGrid = (): number[][] =>
-    Array.from({length: 10}, () => Array(10).fill(0));
+type GridProps = {
+    grid: number[][]; // состояние сетки приходит извне
+    setGrid: (grid: number[][]) => void; // функция обновления сетки
+};
 
-export const Grid: React.FC = () => {
-    const [grid, setGrid] = useState<number[][]>(generateEmptyGrid);
+export const Grid = ({ grid, setGrid }:GridProps) => {
 
-    //  Функция для изменения состояния одной ячейки по индексу строки и столбца
     const toggleCell = (row: number, col: number) => {
-        // Копируем сетку и изменяем только нужную ячейку
         const newGrid = grid.map((r, rowIndex) =>
             r.map((cell, colIndex) =>
-                // Если совпадает нужная ячейка — инвертируем её значение: 0 -> 1, 1 -> 0
                 rowIndex === row && colIndex === col ? 1 - cell : cell
             )
         );
@@ -20,13 +17,10 @@ export const Grid: React.FC = () => {
     };
 
     return (
-        // контейнер, чтобы можно было отобразить всё как блок
-        <div style={{display: 'inline-block'}}>
+        <div className="gridContainer">
             {grid.map((row, rowIndex) => (
-                // Для каждой строки — создаём div с display: flex (чтобы ячейки шли в ряд)
-                <div key={rowIndex} style={{display: 'flex'}}>
+                <div key={rowIndex} style={{ display: 'flex' }}>
                     {row.map((cell, colIndex) => {
-                        // Уникальный ID для каждой ячейки: "строка-столбец" ("3-7")
                         const cellId = `${rowIndex}-${colIndex}`;
                         return (
                             <div
