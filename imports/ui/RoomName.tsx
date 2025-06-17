@@ -14,7 +14,8 @@ export const RoomName = ({room, isActive, onClick, onDeleteClick}: RoomNameProps
             className="room-name"
             style={{
                 fontWeight: isActive ? 'bold' : 'normal',
-                backgroundColor: isActive ? '#e0f7fa' : 'transparent'}}
+                backgroundColor: isActive ? '#e0f7fa' : 'transparent'
+            }}
             onClick={onClick}
         >{room.text}
             <button className={"button-delete-room"} onClick={() => onDeleteClick({_id: room._id})}>
