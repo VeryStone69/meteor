@@ -1,11 +1,11 @@
-import React from 'react';
-import {Task} from './Task';
-import {TasksCollection} from "/imports/api/TasksCollection";
+import React, {useEffect, useState} from 'react';
+import {TasksCollection} from "/imports/api/RoomsCollection";
 import {useTracker, useSubscribe} from "meteor/react-meteor-data";
-import {TaskForm} from "/imports/ui/TaskForm";
 import {Meteor} from "meteor/meteor";
-import type {TaskType, ToggleCheckedArgs} from "/imports/types/TaskType";
+import type {RoomType} from "/imports/types/RoomType";
 import {Grid} from "/imports/ui/Grid";
+import {RoomName} from "/imports/ui/RoomName"
+import {RoomNameForm} from "/imports/ui/RoomNameForm";
 
 export const App = () => {
     const isLoading = useSubscribe("tasks");
@@ -63,18 +63,11 @@ export const App = () => {
 
     return (
         <div className="app">
-            <header>
-                <div className="app-bar">
-                    <div className="app-header">
-                        <h1>📝️ To Do List</h1>
-                    </div>
-                </div>
-            </header>
             <div className="main">
-                <TaskForm/>
+                <RoomNameForm/>
 
                 <ul className="tasks">
-                    {tasks.map((task: RoomType) => <Task
+                    {tasks.map((task: RoomType) => <RoomName
                         key={task._id}
                         task={task}
                         isActive={task._id === activeTaskId}

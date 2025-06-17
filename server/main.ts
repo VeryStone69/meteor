@@ -1,15 +1,14 @@
 import { Meteor } from 'meteor/meteor';
-import { TasksCollection } from '/imports/api/TasksCollection';
-import "../imports/api/TasksPublications";
-import "../imports/api/TasksMethods";
-import {TaskType} from "/imports/types/TaskType";
+import { TasksCollection } from '/imports/api/RoomsCollection';
+import "../imports/api/RoomsPublications";
+import "../imports/api/RoomsMethods";
+import {RoomType} from "/imports/types/RoomType";
 
-type NewTask = Omit<TaskType, '_id'>;
+type NewTask = Omit<RoomType, '_id'>;
 
-const insertTask = async (taskText: string):Promise<void> => {
+const insertRoom = async (taskText: string):Promise<void> => {
   const task: NewTask = {
     text: taskText,
-    // isChecked: false,
     createdAt: new Date(),
   };
   await TasksCollection.insertAsync(task);
@@ -23,13 +22,6 @@ Meteor.startup(async () => {
       'Солнце',
       'Футбол',
       'Айтигеник',
-    ].forEach(insertTask);
+    ].forEach(insertRoom);
   }
 });
-// import { Meteor } from 'meteor/meteor';
-// import '../imports/api/roomsMethods'; // <-- подключаем методы!
-// import '../imports/api/roomsPublications'; // <-- и публикации!
-//
-// Meteor.startup(() => {
-//     console.log('🚀 Сервер запущен');
-// });

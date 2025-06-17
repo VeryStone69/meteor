@@ -1,8 +1,10 @@
 import React, {FormEvent, useState} from "react";
 import {Meteor} from 'meteor/meteor';
-import {TaskInsertInput} from "/imports/types/TaskType";
+import {TaskInsertInput} from "/imports/types/RoomType";
 
-export const TaskForm = () => {
+
+
+export const RoomNameForm = () => {
     const [text, setText] = useState<string>("");
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -12,7 +14,6 @@ export const TaskForm = () => {
 
         const doc: TaskInsertInput = {
             text: text.trim(),
-            isChecked: false,
             createdAt: new Date(),
         };
 
@@ -22,14 +23,15 @@ export const TaskForm = () => {
 
     return (
         <form className="task-form" onSubmit={handleSubmit}>
+            <h4>Название комнаты</h4>
             <input
                 type="text"
-                placeholder="Type to add new tasks"
+                placeholder="Введите название"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
             />
 
-            <button type="submit">Add Task</button>
+            <button type="submit">Создать</button>
         </form>
     );
 };
