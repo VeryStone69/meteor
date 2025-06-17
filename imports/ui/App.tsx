@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {TasksCollection} from "/imports/api/RoomsCollection";
+import {RoomsCollection} from "/imports/api/RoomsCollection";
 import {useTracker, useSubscribe} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import type {RoomType} from "/imports/types/RoomType";
@@ -8,48 +8,48 @@ import {RoomName} from "/imports/ui/RoomName"
 import {RoomNameForm} from "/imports/ui/RoomNameForm";
 
 export const App = () => {
-    const isLoading = useSubscribe("tasks");
+    const isLoading = useSubscribe("rooms");
 
     // id активной задачи
-    const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+    const [activeRoomId, setActiveTaskId] = useState<string | null>(null);
 
     //  состояние сетки для текущей активной задачи
     const [activeGrid, setActiveGrid] = useState<number[][] | null>(null);
 
-    const tasks: RoomType[] = useTracker(() => TasksCollection.find({}, {sort: {createdAt: -1}}).fetch());
+    const rooms: RoomType[] = useTracker(() => RoomsCollection.find({}, {sort: {createdAt: -1}}).fetch());
     //  когда изменяется список задач — выбирается первая задача (по умолчанию)
     useEffect(() => {
-        if (tasks.length === 0) {
+        if (rooms.length === 0) {
             setActiveTaskId(null);
             setActiveGrid(null);
-        } else if (!activeTaskId || !tasks.find(t => t._id === activeTaskId)) {
-            const first = tasks[0];
+        } else if (!activeRoomId || !rooms.find(t => t._id === activeRoomId)) {
+            const first = rooms[0];
             setActiveTaskId(first._id);
             setActiveGrid(first.grid ?? Array.from({length: 10}, () => Array(10).fill(0)));
         }
-    }, [tasks]);
+    }, [rooms]);
 
     // поиск текущую активную задачу
-    const activeTask = tasks.find((task) => task._id === activeTaskId);
+    const activeRoom = rooms.find((room) => room._id === activeRoomId);
 
-    // при переключении задачи — сохраняется предыдущая сетка
-    const handleTaskClick = async (task: RoomType) => {
-        if (activeTask && activeGrid) {
-            await Meteor.callAsync("tasks.updateGrid", {
-                _id: activeTask._id,
+    // при переключении задачи — сохраняется сетка
+    const handleTaskClick = async (room: RoomType) => {
+        if (activeRoom && activeGrid) {
+            await Meteor.callAsync("rooms.updateGrid", {
+                _id: activeRoom._id,
                 grid: activeGrid,
             });
         }
 
         // загрузить сетку новой задачи
-        setActiveTaskId(task._id);
-        setActiveGrid(task.grid ?? Array.from({length: 10}, () => Array(10).fill(0)));
+        setActiveTaskId(room._id);
+        setActiveGrid(room.grid ?? Array.from({length: 10}, () => Array(10).fill(0)));
     };
 
     const handleDelete = async ({_id}: { _id: string }) => {
-        await Meteor.callAsync("tasks.delete", {_id});
+        await Meteor.callAsync("rooms.delete", {_id});
         // если удалили активную задачу — сбросить
-        if (_id === activeTaskId) {
+        if (_id === activeRoomId) {
             setActiveTaskId(null);
             setActiveGrid(null);
         }
@@ -57,7 +57,7 @@ export const App = () => {
     const emptyGrid = Array.from({length: 10}, () => Array(10).fill(0));
 
     if (isLoading()) {
-        return <div>Loading...</div>;
+        return <div>Загрузка...</div>;
     }
 
 
@@ -66,12 +66,12 @@ export const App = () => {
             <div className="main">
                 <RoomNameForm/>
 
-                <ul className="tasks">
-                    {tasks.map((task: RoomType) => <RoomName
-                        key={task._id}
-                        task={task}
-                        isActive={task._id === activeTaskId}
-                        onClick={() => handleTaskClick(task)}
+                <ul className="rooms">
+                    {rooms.map((room: RoomType) => <RoomName
+                        key={room._id}
+                        room={room}
+                        isActive={room._id === activeRoomId}
+                        onClick={() => handleTaskClick(room)}
                         onDeleteClick={handleDelete}
                     />)}
                 </ul>

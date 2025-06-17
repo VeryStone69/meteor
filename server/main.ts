@@ -1,21 +1,21 @@
 import { Meteor } from 'meteor/meteor';
-import { TasksCollection } from '/imports/api/RoomsCollection';
+import { RoomsCollection } from '/imports/api/RoomsCollection';
 import "../imports/api/RoomsPublications";
 import "../imports/api/RoomsMethods";
 import {RoomType} from "/imports/types/RoomType";
 
-type NewTask = Omit<RoomType, '_id'>;
+type NewRoom = Omit<RoomType, '_id'>;
 
-const insertRoom = async (taskText: string):Promise<void> => {
-  const task: NewTask = {
-    text: taskText,
+const insertRoom = async (roomName: string):Promise<void> => {
+  const room: NewRoom = {
+    text: roomName,
     createdAt: new Date(),
   };
-  await TasksCollection.insertAsync(task);
+  await RoomsCollection.insertAsync(room);
 };
 
 Meteor.startup(async () => {
-  if ((await TasksCollection.find().countAsync()) === 0) {
+  if ((await RoomsCollection.find().countAsync()) === 0) {
     [
       'Смайлик',
       'Цветок',

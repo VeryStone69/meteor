@@ -5,4 +5,4 @@ export type RoomType = {
     grid?: number[][]; // поле для хранения состояния сетки
 };
 
-export type TaskInsertInput = Omit<RoomType, "_id">;
+export type RoomInsertInputType = Omit<RoomType, "_id">;

@@ -1,23 +1,23 @@
 import {Meteor} from "meteor/meteor";
-import {TasksCollection} from "./RoomsCollection";
-import type {TaskInsertInput} from "/imports/types/RoomType";
+import {RoomsCollection} from "./RoomsCollection";
+import type {RoomInsertInputType} from "/imports/types/RoomType";
 import {check} from "meteor/check";
 
 
 Meteor.methods({
-    "tasks.insert"(doc: TaskInsertInput) {
+    "rooms.insert"(doc: RoomInsertInputType) {
         // (doc)- Аргумент метода. Это будет объект, переданный клиентом.
-        return TasksCollection.insertAsync(doc);
+        return RoomsCollection.insertAsync(doc);
 
     },
-    "tasks.updateGrid"({_id, grid}: { _id: string; grid: number[][] }) {
+    "rooms.updateGrid"({_id, grid}: { _id: string; grid: number[][] }) {
         check(_id, String);
         check(grid, Array);
-        return TasksCollection.updateAsync(_id, {
+        return RoomsCollection.updateAsync(_id, {
             $set: {grid},
         });
     },
-    "tasks.delete"({_id}: { _id: string }) {
-        return TasksCollection.removeAsync(_id);
+    "rooms.delete"({_id}: { _id: string }) {
+        return RoomsCollection.removeAsync(_id);
     },
 });

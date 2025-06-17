@@ -1,7 +1,6 @@
 import React, {FormEvent, useState} from "react";
 import {Meteor} from 'meteor/meteor';
-import {TaskInsertInput} from "/imports/types/RoomType";
-
+import {RoomInsertInputType} from "/imports/types/RoomType";
 
 
 export const RoomNameForm = () => {
@@ -12,17 +11,17 @@ export const RoomNameForm = () => {
 
         if (!text) return;
 
-        const doc: TaskInsertInput = {
+        const doc: RoomInsertInputType = {
             text: text.trim(),
             createdAt: new Date(),
         };
 
-        await Meteor.callAsync("tasks.insert", doc);
+        await Meteor.callAsync("rooms.insert", doc);
         setText("");
     };
 
     return (
-        <form className="task-form" onSubmit={handleSubmit}>
+        <form className="text-form" onSubmit={handleSubmit}>
             <h4>Название комнаты</h4>
             <input
                 type="text"
