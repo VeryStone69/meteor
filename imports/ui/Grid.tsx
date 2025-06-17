@@ -1,7 +1,7 @@
 import React from 'react';
 
 type GridProps = {
-    grid: number[][]; // состояние сетки приходит извне
+    grid: number[][];
     setGrid: (grid: number[][]) => void; // функция обновления сетки
 };
 

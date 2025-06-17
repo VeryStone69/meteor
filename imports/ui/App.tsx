@@ -7,59 +7,58 @@ import {Grid} from "/imports/ui/Grid";
 import {RoomName} from "/imports/ui/RoomName"
 import {RoomNameForm} from "/imports/ui/RoomNameForm";
 
+const EMPTY_GRID: number[][] = Array.from({length: 10}, () => Array(10).fill(0));
+
 export const App = () => {
     const isLoading = useSubscribe("rooms");
+    const rooms: RoomType[] = useTracker(() => RoomsCollection.find({}, {sort: {createdAt: -1}}).fetch());
 
-    // id активной задачи
-    const [activeRoomId, setActiveTaskId] = useState<string | null>(null);
-
-    //  состояние сетки для текущей активной задачи
+    const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
     const [activeGrid, setActiveGrid] = useState<number[][] | null>(null);
 
-    const rooms: RoomType[] = useTracker(() => RoomsCollection.find({}, {sort: {createdAt: -1}}).fetch());
-    //  когда изменяется список задач — выбирается первая задача (по умолчанию)
+    // когда изменяется список задач — выбирается первая задача
     useEffect(() => {
+        // если нет комнат — сбрасываем оба состояния
         if (rooms.length === 0) {
-            setActiveTaskId(null);
+            setActiveRoomId(null);
             setActiveGrid(null);
-        } else if (!activeRoomId || !rooms.find(t => t._id === activeRoomId)) {
+            return;
+        }
+        // проверяем, осталась ли активная комната в новом списке
+        const stillExists = rooms.some(r => r._id === activeRoomId);
+        // если активной комнаты больше нет (например, её удалили) — выбираем первую
+        if (!stillExists) {
             const first = rooms[0];
-            setActiveTaskId(first._id);
-            setActiveGrid(first.grid ?? Array.from({length: 10}, () => Array(10).fill(0)));
+            setActiveRoomId(first._id);
+            setActiveGrid(first.grid || EMPTY_GRID);
+            return;
         }
     }, [rooms]);
 
-    // поиск текущую активную задачу
-    const activeRoom = rooms.find((room) => room._id === activeRoomId);
 
-    // при переключении задачи — сохраняется сетка
-    const handleTaskClick = async (room: RoomType) => {
-        if (activeRoom && activeGrid) {
-            await Meteor.callAsync("rooms.updateGrid", {
-                _id: activeRoom._id,
+    // обработчик клика по названию комнаты
+    const handleRoomClick = async (room: RoomType) => {
+        // сохраняем сетку текущей активной комнаты
+        if (activeRoomId && activeGrid) {
+            await Meteor.callAsync('rooms.updateGrid', {
+                _id: activeRoomId,
                 grid: activeGrid,
             });
         }
-
-        // загрузить сетку новой задачи
-        setActiveTaskId(room._id);
-        setActiveGrid(room.grid ?? Array.from({length: 10}, () => Array(10).fill(0)));
+        // переключаемся на новую комнату
+        setActiveRoomId(room._id);
+        setActiveGrid(room.grid || EMPTY_GRID);
     };
 
+    // обработчик удаления комнаты
     const handleDelete = async ({_id}: { _id: string }) => {
-        await Meteor.callAsync("rooms.delete", {_id});
-        // если удалили активную задачу — сбросить
-        if (_id === activeRoomId) {
-            setActiveTaskId(null);
-            setActiveGrid(null);
-        }
-    }
-    const emptyGrid = Array.from({length: 10}, () => Array(10).fill(0));
+        await Meteor.callAsync('rooms.delete', {_id});
+    };
+
 
     if (isLoading()) {
         return <div>Загрузка...</div>;
     }
-
 
     return (
         <div className="app">
@@ -71,13 +70,13 @@ export const App = () => {
                         key={room._id}
                         room={room}
                         isActive={room._id === activeRoomId}
-                        onClick={() => handleTaskClick(room)}
+                        onClick={() => handleRoomClick(room)}
                         onDeleteClick={handleDelete}
                     />)}
                 </ul>
             </div>
             <Grid
-                grid={activeGrid || emptyGrid}
+                grid={activeGrid || EMPTY_GRID}
                 setGrid={setActiveGrid}
             />
         </div>

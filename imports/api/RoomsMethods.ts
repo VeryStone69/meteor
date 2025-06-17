@@ -6,7 +6,7 @@ import {check} from "meteor/check";
 
 Meteor.methods({
     "rooms.insert"(doc: RoomInsertInputType) {
-        // (doc)- Аргумент метода. Это будет объект, переданный клиентом.
+        // (doc)- объект, переданный клиентом.
         return RoomsCollection.insertAsync(doc);
 
     },
