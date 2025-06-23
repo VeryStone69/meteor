@@ -14,26 +14,25 @@ export const App = () => {
     const rooms: RoomType[] = useTracker(() => RoomsCollection.find({}, {sort: {createdAt: -1}}).fetch());
 
     const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
-    const [activeGrid, setActiveGrid] = useState<number[][] | null>(null);
+
+    // получаем активную комнату и её сетку
+    const activeRoom = rooms.find((r) => r._id === activeRoomId);
+    const activeGrid = activeRoom?.grid || EMPTY_GRID;
 
     // когда изменяется список задач — выбирается первая задача
     useEffect(() => {
         // если нет комнат — сбрасываем оба состояния
         if (rooms.length === 0) {
             setActiveRoomId(null);
-            setActiveGrid(null);
             return;
         }
         // проверяем, осталась ли активная комната в новом списке
         const stillExists = rooms.some(r => r._id === activeRoomId);
         // если активной комнаты больше нет (например, её удалили) — выбираем первую
         if (!stillExists) {
-            const first = rooms[0];
-            setActiveRoomId(first._id);
-            setActiveGrid(first.grid || EMPTY_GRID);
-            return;
+            setActiveRoomId(rooms[0]._id);
         }
-    }, [rooms]);
+    }, [rooms,activeRoomId]);
 
 
     // обработчик клика по названию комнаты
@@ -47,7 +46,6 @@ export const App = () => {
         }
         // переключаемся на новую комнату
         setActiveRoomId(room._id);
-        setActiveGrid(room.grid || EMPTY_GRID);
     };
 
     // обработчик удаления комнаты
@@ -76,9 +74,10 @@ export const App = () => {
                 </ul>
             </div>
             <Grid
-                grid={activeGrid || EMPTY_GRID}
-                setGrid={setActiveGrid}
-                activeRoomId={activeRoomId}
+                grid={activeGrid}
+                updateGrid={(grid) =>
+                    Meteor.callAsync("rooms.updateGrid", { _id: activeRoomId, grid })
+                }
             />
         </div>
     );
