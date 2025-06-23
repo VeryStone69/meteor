@@ -1,11 +1,13 @@
 import React from 'react';
+import {Meteor} from "meteor/meteor";
 
 type GridProps = {
     grid: number[][];
     setGrid: (grid: number[][]) => void; // функция обновления сетки
+    activeRoomId:  string | null
 };
 
-export const Grid = ({ grid, setGrid }:GridProps) => {
+export const Grid = ({ grid, setGrid,activeRoomId }:GridProps) => {
 
     const toggleCell = (row: number, col: number) => {
         const newGrid = grid.map((r, rowIndex) =>
@@ -14,6 +16,10 @@ export const Grid = ({ grid, setGrid }:GridProps) => {
             )
         );
         setGrid(newGrid);
+        Meteor.call("rooms.updateGrid", {
+            _id: activeRoomId, // этот id нужно прокинуть через пропсы или контекст
+            grid: newGrid,
+        });
     };
 
     return (

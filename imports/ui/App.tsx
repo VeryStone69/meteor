@@ -78,6 +78,7 @@ export const App = () => {
             <Grid
                 grid={activeGrid || EMPTY_GRID}
                 setGrid={setActiveGrid}
+                activeRoomId={activeRoomId}
             />
         </div>
     );
